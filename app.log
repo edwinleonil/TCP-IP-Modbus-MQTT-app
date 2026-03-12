@@ -1,0 +1,11 @@
+2026-03-12 22:54:41 [INFO] comm_app.tcp.server: TCP server started on 0.0.0.0:5000
+2026-03-12 22:55:57 [INFO] comm_app.tcp.server: TCP server stopped
+2026-03-12 22:57:06 [ERROR] comm_app.mqtt: MQTT connect failed: [Errno 11001] getaddrinfo failed
+2026-03-12 22:57:06 [ERROR] comm_app.ui.mqtt: MQTT panel error: MQTT connect failed: [Errno 11001] getaddrinfo failed
+2026-03-12 22:57:06 [ERROR] comm_app.mqtt: MQTT connect failed: [Errno 11001] getaddrinfo failed
+2026-03-12 22:57:06 [ERROR] comm_app.ui.mqtt: MQTT panel error: MQTT connect failed: [Errno 11001] getaddrinfo failed
+2026-03-12 22:57:43 [ERROR] comm_app.mqtt: MQTT connect failed: [WinError 10061] No connection could be made because the target machine actively refused it
+2026-03-12 22:57:43 [ERROR] comm_app.ui.mqtt: MQTT panel error: MQTT connect failed: [WinError 10061] No connection could be made because the target machine actively refused it
+2026-03-12 23:11:32 [INFO] comm_app.ui.main: Shutting down…
+2026-03-12 23:11:32 [INFO] comm_app.mqtt: MQTT client disconnected
+2026-03-12 23:27:39 [INFO] comm_app.ui.main: Shutting down…

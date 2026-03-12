@@ -1,0 +1,45 @@
+{
+  "theme": "dark",
+  "tcp_server": {
+    "host": "0.0.0.0",
+    "port": 5000
+  },
+  "tcp_client": {
+    "host": "127.0.0.1",
+    "port": 5000
+  },
+  "mqtt": {
+    "broker": "localhost",
+    "port": 1883,
+    "client_id": "comm_app_client"
+  },
+  "modbus_tcp_server": {
+    "host": "0.0.0.0",
+    "port": 5020,
+    "register_count": 100
+  },
+  "modbus_tcp_client": {
+    "host": "127.0.0.1",
+    "port": 5020
+  },
+  "modbus_rtu_server": {
+    "port": "COM1",
+    "baudrate": 9600,
+    "parity": "N",
+    "stopbits": 1,
+    "slave_id": 1,
+    "register_count": 100
+  },
+  "modbus_rtu_client": {
+    "port": "COM1",
+    "baudrate": 9600,
+    "parity": "N",
+    "stopbits": 1,
+    "slave_id": 1
+  },
+  "mqtt_broker": {
+    "enabled": false,
+    "port": 1883,
+    "config_path": "config/mosquitto.conf"
+  }
+}
