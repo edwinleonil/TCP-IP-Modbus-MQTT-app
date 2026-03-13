@@ -13,6 +13,7 @@ class MQTTClientWrapper:
     def __init__(self):
         self._client: mqtt.Client | None = None
         self._connected = False
+        self._intentional_disconnect = False
         self._subscriptions: set[str] = set()
 
         # Callbacks
@@ -29,13 +30,16 @@ class MQTTClientWrapper:
     def subscriptions(self) -> set[str]:
         return set(self._subscriptions)
 
-    def connect(self, broker: str, port: int = 1883, client_id: str = "") -> None:
+    def connect(self, broker: str, port: int = 1883, client_id: str = "",
+                username: str = "", password: str = "") -> None:
         if self._connected:
             return
         self._client = mqtt.Client(
             callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
             client_id=client_id,
         )
+        if username:
+            self._client.username_pw_set(username, password)
         self._client.on_connect = self._on_connect
         self._client.on_disconnect = self._on_disconnect
         self._client.on_message = self._on_message
@@ -64,8 +68,11 @@ class MQTTClientWrapper:
     def _on_disconnect(self, client, userdata, flags, reason_code, properties=None):
         self._connected = False
         logger.info("MQTT disconnected (rc=%s)", reason_code)
-        if self.on_disconnected:
-            self.on_disconnected()
+        if self._intentional_disconnect:
+            if self.on_disconnected:
+                self.on_disconnected()
+        else:
+            logger.info("MQTT unexpected disconnect – paho will auto-reconnect")
 
     def _on_message(self, client, userdata, msg: mqtt.MQTTMessage):
         payload = msg.payload.decode("utf-8", errors="replace")
@@ -97,6 +104,10 @@ class MQTTClientWrapper:
         if not self._client:
             return
         self._connected = False
+        # Clear callbacks to prevent stale signals during teardown
+        self._client.on_connect = None
+        self._client.on_disconnect = None
+        self._client.on_message = None
         self._client.loop_stop()
         self._client.disconnect()
         self._client = None

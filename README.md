@@ -101,6 +101,27 @@ uv run python communication_app/main.py
 
 The main window opens with three tabs (TCP/IP, MQTT, Modbus) and a system log dock at the bottom.
 
+### Connecting to a Remote MQTT Broker
+
+To connect to an MQTT broker that requires authentication (e.g. Mosquitto on a Raspberry Pi):
+
+1. Go to the **MQTT** tab → **Client Connection** section.
+2. Set **Broker** to the broker's IP address (e.g. `169.254.62.50`).
+3. Set **Port** to the broker port (default `1883`).
+4. Enter a unique **Client ID** (e.g. `comm_app_client`).
+5. If the broker requires authentication, fill in **Username** and **Password**.
+6. Click **Connect**.
+
+| Field       | Example            |
+|-------------|--------------------|
+| Broker      | `169.254.62.50`    |
+| Port        | `1883`             |
+| Client ID   | `comm_app_client`  |
+| Username    | `myuser`           |
+| Password    | *(your password)*  |
+
+> **Tip:** Username and Password are optional — leave them blank if your broker allows anonymous connections.
+
 ## Running Tests
 
 ```bash

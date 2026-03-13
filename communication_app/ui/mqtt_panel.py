@@ -131,6 +131,18 @@ class MQTTPanel(QWidget):
         row.addWidget(self.client_id_input)
         conn_layout.addLayout(row)
 
+        auth_row = QHBoxLayout()
+        auth_row.addWidget(QLabel("Username:"))
+        self.mqtt_username_input = QLineEdit()
+        self.mqtt_username_input.setPlaceholderText("(optional)")
+        auth_row.addWidget(self.mqtt_username_input)
+        auth_row.addWidget(QLabel("Password:"))
+        self.mqtt_password_input = QLineEdit()
+        self.mqtt_password_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.mqtt_password_input.setPlaceholderText("(optional)")
+        auth_row.addWidget(self.mqtt_password_input)
+        conn_layout.addLayout(auth_row)
+
         btn_row2 = QHBoxLayout()
         self.btn_connect = QPushButton("Connect")
         self.btn_disconnect = QPushButton("Disconnect")
@@ -330,6 +342,8 @@ class MQTTPanel(QWidget):
             self.broker_input.text(),
             self.port_input.value(),
             self.client_id_input.text(),
+            self.mqtt_username_input.text(),
+            self.mqtt_password_input.text(),
         )
         self._worker.connected.connect(self._on_connected)
         self._worker.disconnected.connect(self._on_disconnected)

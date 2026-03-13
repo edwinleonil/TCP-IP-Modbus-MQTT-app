@@ -119,29 +119,44 @@ class MQTTClientWorker(QThread):
         self._broker = "localhost"
         self._port = 1883
         self._client_id = ""
+        self._username = ""
+        self._password = ""
+        self._running = False
 
     @property
     def client(self) -> MQTTClientWrapper:
         return self._client
 
-    def configure(self, broker: str, port: int, client_id: str) -> None:
+    def configure(self, broker: str, port: int, client_id: str,
+                  username: str = "", password: str = "") -> None:
         self._broker = broker
         self._port = port
         self._client_id = client_id
+        self._username = username
+        self._password = password
 
     def run(self) -> None:
+        self._running = True
         self._client.on_connected = lambda: self.connected.emit()
         self._client.on_disconnected = lambda: self.disconnected.emit()
         self._client.on_message_received = lambda t, p: self.message_received.emit(t, p)
         self._client.on_error = lambda e: self.error.emit(e)
         try:
-            self._client.connect(self._broker, self._port, self._client_id)
-            while self._client.is_connected:
+            self._client.connect(self._broker, self._port, self._client_id,
+                                self._username, self._password)
+            # Wait for initial connection (up to 10 s)
+            attempts = 50
+            while self._running and not self._client.is_connected and attempts > 0:
+                self.msleep(200)
+                attempts -= 1
+            # Keep thread alive while running
+            while self._running:
                 self.msleep(200)
         except Exception as e:
             self.error.emit(str(e))
 
     def stop(self) -> None:
+        self._running = False
         self._client.disconnect()
         self.quit()
         self.wait(3000)
