@@ -39,12 +39,13 @@ class ModbusTCPServer:
         if self._running:
             return
         # Build data store – holding registers initialised to 0
-        block = ModbusSequentialDataBlock(0, [0] * register_count)
+        # pymodbus 3.12+ applies address+1 internally, so allocate one extra
+        block = ModbusSequentialDataBlock(0, [0] * (register_count + 1))
         self._slave_context = ModbusDeviceContext(
-            di=block, co=block, hr=block, ir=block, zero_mode=True
+            di=block, co=block, hr=block, ir=block
         )
         self._context = ModbusServerContext(
-            slaves=self._slave_context, single=True
+            devices=self._slave_context, single=True
         )
         self._host = host
         self._port = port

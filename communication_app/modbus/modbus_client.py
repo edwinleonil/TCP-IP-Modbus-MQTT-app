@@ -45,7 +45,7 @@ class ModbusTCPClient:
             return None
         try:
             result = self._client.read_holding_registers(
-                address, count=count, slave=slave
+                address, count=count, device_id=slave
             )
             if result.isError():
                 logger.error("Modbus read error: %s", result)
@@ -65,7 +65,7 @@ class ModbusTCPClient:
         if not self._connected or not self._client:
             return False
         try:
-            result = self._client.write_register(address, value, slave=slave)
+            result = self._client.write_register(address, value, device_id=slave)
             if result.isError():
                 logger.error("Modbus write error: %s", result)
                 if self.on_error:

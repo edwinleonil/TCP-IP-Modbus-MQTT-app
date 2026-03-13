@@ -2,7 +2,7 @@
 
 import logging
 
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt, Slot, QTimer
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -53,6 +53,11 @@ class ModbusPanel(QWidget):
         self._rtu_server_worker: ModbusRTUServerWorker | None = None
         self._rtu_client_worker: ModbusRTUClientWorker | None = None
         self._setup_ui()
+
+        # Periodic refresh of server register tables
+        self._refresh_timer = QTimer(self)
+        self._refresh_timer.timeout.connect(self._refresh_server_tables)
+        self._refresh_timer.start(1000)
 
     def _setup_ui(self) -> None:
         layout = QVBoxLayout(self)
@@ -568,7 +573,21 @@ class ModbusPanel(QWidget):
             table.setItem(i, 0, QTableWidgetItem(str(start_addr + i)))
             table.setItem(i, 1, QTableWidgetItem(str(val)))
 
+    def _refresh_server_tables(self) -> None:
+        """Refresh server register tables so remote writes are visible."""
+        if self._tcp_server_worker and self._tcp_server_worker.server.is_running:
+            count = self.tcp_srv_table.rowCount()
+            values = self._tcp_server_worker.server.get_registers(0, count)
+            if isinstance(values, list):
+                self.tcp_srv_table.blockSignals(True)
+                for i, val in enumerate(values):
+                    item = self.tcp_srv_table.item(i, 1)
+                    if item and str(val) != item.text():
+                        item.setText(str(val))
+                self.tcp_srv_table.blockSignals(False)
+
     def shutdown(self) -> None:
+        self._refresh_timer.stop()
         self._tcp_stop_server()
         if self._tcp_client_worker:
             self._tcp_client_worker.disconnect_from_server()
